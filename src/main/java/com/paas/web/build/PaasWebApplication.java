@@ -1,4 +1,4 @@
-package com.paas.web;
+package com.paas.web.build;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
