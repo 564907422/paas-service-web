@@ -1,12 +1,20 @@
 package com.paas.web.domain;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "paas_service_resource")
 public class PaasServiceResource {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "service_type")
     private Byte serviceType;
 
     private String servers;
 
+    @Column(name = "server_info")
     private String serverInfo;
 
     private String status;

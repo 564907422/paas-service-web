@@ -1,22 +1,32 @@
 package com.paas.web.domain;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 
+@Entity
+@Table(name = "paas_service_instance")
 public class PaasServiceInstance {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "service_id")
     private String serviceId;
 
     private String servers;
 
+    @Column(name = "server_info")
     private String serverInfo;
 
+    @Column(name = "client_conf")
     private String clientConf;
 
     private String status;
 
+    @Column(name = "begin_time")
     private Timestamp beginTime;
 
+    @Column(name = "end_time")
     private Timestamp endTime;
     
     private String remark;

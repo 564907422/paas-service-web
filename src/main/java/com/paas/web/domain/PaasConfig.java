@@ -1,7 +1,15 @@
 package com.paas.web.domain;
 
+
+import javax.persistence.*;
+
+
+@Entity
+@Table(name = "paas_config")
 public class PaasConfig {
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Integer id;
 
     private Byte type;
 
