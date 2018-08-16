@@ -2,6 +2,7 @@ package com.paas.web.repository;
 
 import com.paas.web.domain.PaasConfig;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 public interface PaasConfigRepository extends PagingAndSortingRepository<PaasConfig,Integer> {
     /**
