@@ -6,10 +6,13 @@ import com.paas.zk.zookeeper.ZKClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Controller
 @RequestMapping("/paas/auth")
 public class AuthController {
 
@@ -21,7 +24,7 @@ public class AuthController {
     private IPaasConfigService paasConfigService;
 
     @ResponseBody
-    @RequestMapping(value = "/service")
+    @RequestMapping(value = "/service", method = RequestMethod.GET)
     public AuthResultVo service(String serviceId) {
         logger.debug("--------/auth/service--{}---------", serviceId);
         AuthResultVo vo = authService(serviceId);
@@ -42,7 +45,7 @@ public class AuthController {
 
             //String zkUrl = "";
             if (zkClient == null) {
-                zkUrl = paasConfigService.findPaasConfigByStatusAndType(0,1).getServers();
+                zkUrl = paasConfigService.findPaasConfigByStatusAndType(1, 1).getServers();
                 logger.debug("--------/auth/service-zkUrl={}---------", zkUrl);
                 if (StringUtils.isEmpty(zkUrl)) {
                     vo.setMsg("inner zk error.");

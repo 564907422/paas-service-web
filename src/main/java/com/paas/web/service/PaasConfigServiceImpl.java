@@ -12,6 +12,6 @@ public class PaasConfigServiceImpl implements IPaasConfigService {
 
     @Override
     public PaasConfig findPaasConfigByStatusAndType(Integer status, Integer type) {
-        return paasConfigRepository.findPaasConfigByStatusAndType(status, type);
+        return paasConfigRepository.findPaasConfigByStatusAndType(status.toString(), Byte.parseByte(type.toString()));
     }
 }

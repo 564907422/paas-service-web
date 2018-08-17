@@ -11,5 +11,5 @@ public interface PaasConfigRepository extends PagingAndSortingRepository<PaasCon
      * @param type
      * @return
      */
-    PaasConfig findPaasConfigByStatusAndType(Integer status,Integer type);
+    PaasConfig findPaasConfigByStatusAndType(String status,Byte type);
 }
