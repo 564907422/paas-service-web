@@ -3,9 +3,6 @@ package com.paas.web.vo;
 import java.io.Serializable;
 
 public class AuthResultVo implements Serializable{
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8465258076602866948L;
 	private String serviceId;
 	private String zkAdress;
