@@ -14,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -38,8 +40,8 @@ public class ManagerController {
     private ZKClient zkClient;
 
     @ResponseBody
-    @RequestMapping(value = "/open")
-    public String open(ServiceVo serviceVo) {
+    @RequestMapping(value = "/open",method = RequestMethod.POST,produces = "application/json")
+    public String open(@RequestBody ServiceVo serviceVo) {
         LOGGER.debug("--------/open--{},{},{}---------",
                 serviceVo.getBuizCode(),
                 serviceVo.getType(),
@@ -47,7 +49,7 @@ public class ManagerController {
 
         Byte serviceType = serviceVo.getType();
         String buizCode = serviceVo.getBuizCode();
-        String remark = serviceVo.getRemark();
+         String remark = serviceVo.getRemark();
         //1
         LOGGER.debug("1.--------获得serviceId----buizCode:{}--serviceType:{}-----", buizCode, serviceType);
         if (!validate(buizCode, serviceType)) {
