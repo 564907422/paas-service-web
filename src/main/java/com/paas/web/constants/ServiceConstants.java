@@ -1,4 +1,4 @@
-package com.paas.web.Constants;
+package com.paas.web.constants;
 
 public class ServiceConstants {
     public static final Byte CONNFIG_INNER_TYPE = 1;

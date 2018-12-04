@@ -2,7 +2,7 @@ package com.paas.web.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.paas.web.Constants.ServiceConstants;
+import com.paas.web.constants.ServiceConstants;
 import com.paas.web.domain.PaasServiceInstance;
 import com.paas.web.domain.PaasServiceResource;
 import com.paas.web.service.IPaasConfigService;
@@ -40,7 +40,7 @@ public class ManagerController {
     private ZKClient zkClient;
 
     @ResponseBody
-    @RequestMapping(value = "/open",method = RequestMethod.POST,produces = "application/json")
+    @RequestMapping(value = "/open", method = RequestMethod.POST, produces = "application/json")
     public String open(@RequestBody ServiceVo serviceVo) {
         LOGGER.debug("--------/open--{},{},{}---------",
                 serviceVo.getBuizCode(),
@@ -49,7 +49,7 @@ public class ManagerController {
 
         Byte serviceType = serviceVo.getType();
         String buizCode = serviceVo.getBuizCode();
-         String remark = serviceVo.getRemark();
+        String remark = serviceVo.getRemark();
         //1
         LOGGER.debug("1.--------获得serviceId----buizCode:{}--serviceType:{}-----", buizCode, serviceType);
         if (!validate(buizCode, serviceType)) {
@@ -90,6 +90,13 @@ public class ManagerController {
 
         return serviceId;
 
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/tslist", method = RequestMethod.GET)
+    public String tsList() {
+        Iterable<PaasServiceInstance> list = paasServiceInstanceService.getInstanceList();
+        return JSON.toJSONString(list);
     }
 
 

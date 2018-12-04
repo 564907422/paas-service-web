@@ -6,6 +6,7 @@ import com.paas.web.service.IPaasServiceInstanceService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class PaasServiceInstanceServiceImpl implements IPaasServiceInstanceService {
@@ -24,5 +25,11 @@ public class PaasServiceInstanceServiceImpl implements IPaasServiceInstanceServi
     @Override
     public Integer insert(PaasServiceInstance paasServiceInstance) {
         return paasServiceInstanceRepository.save(paasServiceInstance).getId();
+    }
+
+    @Override
+    public Iterable<PaasServiceInstance> getInstanceList() {
+        Iterable<PaasServiceInstance> all = paasServiceInstanceRepository.findAll();
+        return all;
     }
 }
