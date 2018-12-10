@@ -28,8 +28,8 @@ public class PaasServiceInstanceServiceImpl implements IPaasServiceInstanceServi
     }
 
     @Override
-    public Iterable<PaasServiceInstance> getInstanceList() {
-        Iterable<PaasServiceInstance> all = paasServiceInstanceRepository.findAll();
+    public List<PaasServiceInstance> getInstanceList() {
+        List<PaasServiceInstance> all = paasServiceInstanceRepository.findAll();
         return all;
     }
 }

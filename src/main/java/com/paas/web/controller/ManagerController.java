@@ -1,6 +1,7 @@
 package com.paas.web.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.paas.web.constants.ServiceConstants;
 import com.paas.web.domain.PaasServiceInstance;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -95,8 +97,20 @@ public class ManagerController {
     @ResponseBody
     @RequestMapping(value = "/tslist", method = RequestMethod.GET)
     public String tsList() {
-        Iterable<PaasServiceInstance> list = paasServiceInstanceService.getInstanceList();
-        return JSON.toJSONString(list);
+        List<PaasServiceInstance> list = paasServiceInstanceService.getInstanceList();
+
+        JSONArray array = new JSONArray();
+
+        for (PaasServiceInstance paasServiceInstance:list) {
+            JSONObject jsonObject = new JSONObject();
+            String[] s = paasServiceInstance.getServiceId().split("-");
+            jsonObject.put("type", s[0] + s[1]);
+            jsonObject.put("servicerId", paasServiceInstance.getServiceId());
+            jsonObject.put("remark", paasServiceInstance.getRemark());
+            array.add(jsonObject);
+        }
+
+        return array.toJSONString();
     }
 
 

@@ -9,5 +9,5 @@ public interface IPaasServiceInstanceService {
 
     Integer insert(PaasServiceInstance paasServiceInstance);
 
-    Iterable<PaasServiceInstance>  getInstanceList();
+    List<PaasServiceInstance>  getInstanceList();
 }
