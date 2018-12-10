@@ -9,6 +9,7 @@ import com.paas.web.domain.PaasServiceResource;
 import com.paas.web.service.IPaasConfigService;
 import com.paas.web.service.IPaasServiceInstanceService;
 import com.paas.web.service.IPaasServiceResourceService;
+import com.paas.web.vo.RspVo;
 import com.paas.web.vo.ServiceVo;
 import com.paas.zk.zookeeper.ZKClient;
 import org.slf4j.Logger;
@@ -96,12 +97,12 @@ public class ManagerController {
 
     @ResponseBody
     @RequestMapping(value = "/tslist", method = RequestMethod.GET)
-    public String tsList() {
+    public RspVo tsList() {
         List<PaasServiceInstance> list = paasServiceInstanceService.getInstanceList();
 
         JSONArray array = new JSONArray();
 
-        for (PaasServiceInstance paasServiceInstance:list) {
+        for (PaasServiceInstance paasServiceInstance : list) {
             JSONObject jsonObject = new JSONObject();
             String[] s = paasServiceInstance.getServiceId().split("-");
             jsonObject.put("type", s[0] + s[1]);
@@ -110,7 +111,7 @@ public class ManagerController {
             array.add(jsonObject);
         }
 
-        return array.toJSONString();
+        return RspVo.success(array);
     }
 
 
