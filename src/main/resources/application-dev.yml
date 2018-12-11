@@ -5,6 +5,9 @@ spring:
     url: jdbc:mysql://10.0.13.46:3306/paas?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
     username: db_writer
     password: ka_32^%*ko
+  devtools:
+    restart:
+      enabled: true
 
 logging:
   file: /home/darren/logs/paas-service-web.log
@@ -18,3 +21,4 @@ logging:
 
 server:
   port: 8085
+
