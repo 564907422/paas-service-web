@@ -1,0 +1,18 @@
+package com.paas.web.service.impl;
+
+import com.paas.web.domain.SysUser;
+import com.paas.web.repository.SysUserRepository;
+import com.paas.web.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SysUserServiceImpl implements ISysUserService {
+    @Autowired
+    private SysUserRepository sysUserRepository;
+
+    @Override
+    public SysUser findByUsername(String username) {
+        return sysUserRepository.findByUsername(username);
+    }
+}
