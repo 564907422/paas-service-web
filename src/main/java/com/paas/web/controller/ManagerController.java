@@ -6,14 +6,17 @@ import com.alibaba.fastjson.JSONObject;
 import com.paas.web.constants.ServiceConstants;
 import com.paas.web.domain.PaasServiceInstance;
 import com.paas.web.domain.PaasServiceResource;
+import com.paas.web.domain.SysUser;
 import com.paas.web.service.IPaasConfigService;
 import com.paas.web.service.IPaasServiceInstanceService;
 import com.paas.web.service.IPaasServiceResourceService;
+import com.paas.web.service.ISysUserService;
 import com.paas.web.vo.RspVo;
 import com.paas.web.vo.ServiceVo;
 import com.paas.zk.zookeeper.ZKClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +42,8 @@ public class ManagerController {
     IPaasServiceResourceService paasServiceResourceService;
     @Resource
     IPaasConfigService paasConfigService;
+    @Autowired
+    ISysUserService sysUserService;
 
     private ZKClient zkClient;
 
@@ -112,6 +117,17 @@ public class ManagerController {
         }
 
         return RspVo.success(array);
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public RspVo login() {
+        SysUser user = sysUserService.findByUsername("root");
+        if (user == null) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "登录失败");
+        }
+        return RspVo.success(user);
     }
 
 
