@@ -18,7 +18,7 @@ public class SysUserServiceImpl implements ISysUserService {
         SysUser user = new SysUser();
         user.setId(1);
         user.setUsername("root");
-        user.setPassword(MD5Util.encode("1234567"));
+        user.setPassword(MD5Util.encode("123456"));
         return user;
     }
 }

@@ -1,5 +1,7 @@
 package com.paas.web.config;
 
+import com.paas.web.security.GoAccessDeniedHandler;
+import com.paas.web.security.GoAuthenticationEntryPoint;
 import com.paas.web.security.MyUserDetailsService;
 import com.paas.web.utils.MD5Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,10 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .exceptionHandling()
+                .accessDeniedHandler(new GoAccessDeniedHandler())
+                .authenticationEntryPoint(new GoAuthenticationEntryPoint())
+                .and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/logout").permitAll()
@@ -33,6 +39,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/fonts/**").permitAll()
                 .antMatchers("/favicon.ico").permitAll()
                 .antMatchers("/paas/auth/service").permitAll()
+                .antMatchers("/paas/manager/login").permitAll()
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
