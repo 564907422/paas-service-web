@@ -13,6 +13,7 @@ import com.paas.web.service.IPaasServiceInstanceService;
 import com.paas.web.service.IPaasServiceResourceService;
 import com.paas.web.service.ISysUserService;
 import com.paas.web.utils.MD5Util;
+import com.paas.web.vo.LoginVo;
 import com.paas.web.vo.RspVo;
 import com.paas.web.vo.ServiceVo;
 import com.paas.zk.zookeeper.ZKClient;
@@ -131,10 +132,14 @@ public class ManagerController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public RspVo login(HttpServletRequest request) {
-        UserDetails userDetails = myUserDetailsService.loadUserByUsername("root");
-        if (userDetails == null || !MD5Util.encode("123456").equals(userDetails.getPassword())) {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public RspVo login(HttpServletRequest request, @RequestBody LoginVo vo) {
+        if (StringUtils.isEmpty(vo.getUsername()) || StringUtils.isEmpty(vo.getPassword())) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
+        }
+
+        UserDetails userDetails = myUserDetailsService.loadUserByUsername(vo.getUsername());
+        if (userDetails == null || !MD5Util.encode(vo.getPassword()).equals(userDetails.getPassword())) {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "登录失败");
         }
 
