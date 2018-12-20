@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsUtils;
 
 @Configuration
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -25,12 +26,16 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 .csrf().disable()
                 .exceptionHandling()
                 .accessDeniedHandler(new GoAccessDeniedHandler())
                 .authenticationEntryPoint(new GoAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
+                //处理跨域请求中的Preflight请求
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/login").permitAll()
                 .antMatchers("/logout").permitAll()
                 .antMatchers("/images/**").permitAll()
