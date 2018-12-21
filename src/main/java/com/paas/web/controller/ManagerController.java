@@ -143,16 +143,16 @@ public class ManagerController {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "登录失败");
         }
 
-        //PreAuthenticatedAuthenticationToken当然可以用其他token,如UsernamePasswordAuthenticationToken
-        PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(userDetails,
-                userDetails.getPassword(), userDetails.getAuthorities());
-        //设置authentication中details
-        authentication.setDetails(new WebAuthenticationDetails(request));
-        //存放authentication到SecurityContextHolder
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        HttpSession session = request.getSession(true);
-        //在session中存放security context,方便同一个session中控制用户的其他操作
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+//        //PreAuthenticatedAuthenticationToken当然可以用其他token,如UsernamePasswordAuthenticationToken
+//        PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(userDetails,
+//                userDetails.getPassword(), userDetails.getAuthorities());
+//        //设置authentication中details
+//        authentication.setDetails(new WebAuthenticationDetails(request));
+//        //存放authentication到SecurityContextHolder
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        HttpSession session = request.getSession(true);
+//        //在session中存放security context,方便同一个session中控制用户的其他操作
+//        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
         return RspVo.success(userDetails);
     }
 

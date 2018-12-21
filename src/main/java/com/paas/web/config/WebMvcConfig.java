@@ -1,0 +1,38 @@
+package com.paas.web.config;
+
+import com.paas.web.interceptors.LoginInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+    @Autowired
+    LoginInterceptor loginInterceptor;
+
+    /**
+     * 增加跨域支持
+     *
+     * @param registry
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //登录验证拦截器
+        InterceptorRegistration addInterceptor = registry.addInterceptor(loginInterceptor);
+
+        // 排除配置
+        addInterceptor.excludePathPatterns("/error");
+        addInterceptor.excludePathPatterns("/paas/manager/login");
+
+        // 拦截配置
+        addInterceptor.addPathPatterns("/**");
+    }
+}

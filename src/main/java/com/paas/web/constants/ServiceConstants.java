@@ -41,4 +41,6 @@ public class ServiceConstants {
         public static final String msg_fail = "操作失败！";
         public static final String msg_null = "数据为空！";
     }
+
+    public static final String SESSION_KEY = "session_key_user";
 }
