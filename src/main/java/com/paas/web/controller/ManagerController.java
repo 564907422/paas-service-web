@@ -7,7 +7,6 @@ import com.paas.web.constants.ServiceConstants;
 import com.paas.web.domain.PaasServiceInstance;
 import com.paas.web.domain.PaasServiceResource;
 import com.paas.web.domain.SysUser;
-import com.paas.web.security.MyUserDetailsService;
 import com.paas.web.service.IPaasConfigService;
 import com.paas.web.service.IPaasServiceInstanceService;
 import com.paas.web.service.IPaasServiceResourceService;
@@ -20,10 +19,6 @@ import com.paas.zk.zookeeper.ZKClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,8 +48,8 @@ public class ManagerController {
     IPaasConfigService paasConfigService;
     @Autowired
     ISysUserService sysUserService;
-    @Autowired
-    MyUserDetailsService myUserDetailsService;
+//    @Autowired
+//    MyUserDetailsService myUserDetailsService;
 
     private ZKClient zkClient;
 
@@ -138,21 +133,13 @@ public class ManagerController {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
         }
 
-        UserDetails userDetails = myUserDetailsService.loadUserByUsername(vo.getUsername());
+        SysUser userDetails = sysUserService.findByUsername(vo.getUsername());
         if (userDetails == null || !MD5Util.encode(vo.getPassword()).equals(userDetails.getPassword())) {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "登录失败");
         }
 
-//        //PreAuthenticatedAuthenticationToken当然可以用其他token,如UsernamePasswordAuthenticationToken
-//        PreAuthenticatedAuthenticationToken authentication = new PreAuthenticatedAuthenticationToken(userDetails,
-//                userDetails.getPassword(), userDetails.getAuthorities());
-//        //设置authentication中details
-//        authentication.setDetails(new WebAuthenticationDetails(request));
-//        //存放authentication到SecurityContextHolder
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        HttpSession session = request.getSession(true);
-//        //在session中存放security context,方便同一个session中控制用户的其他操作
-//        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+        HttpSession session = request.getSession();
+        session.setAttribute(ServiceConstants.SESSION_KEY, userDetails);
         return RspVo.success(userDetails);
     }
 

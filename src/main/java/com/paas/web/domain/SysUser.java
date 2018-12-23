@@ -1,6 +1,5 @@
 package com.paas.web.domain;
 
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 

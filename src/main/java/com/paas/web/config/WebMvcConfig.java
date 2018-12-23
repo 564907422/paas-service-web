@@ -1,5 +1,6 @@
 package com.paas.web.config;
 
+import com.paas.web.interceptors.CorsInterceptor;
 import com.paas.web.interceptors.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -12,16 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
     @Autowired
     LoginInterceptor loginInterceptor;
+    @Autowired
+    CorsInterceptor corsInterceptor;
 
-    /**
-     * 增加跨域支持
-     *
-     * @param registry
-     */
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -34,5 +28,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 拦截配置
         addInterceptor.addPathPatterns("/**");
+
+        //跨域拦截器
+        InterceptorRegistration addCorsInterceptor = registry.addInterceptor(corsInterceptor);
+        // 拦截配置
+        addCorsInterceptor.addPathPatterns("/**");
+
     }
 }
