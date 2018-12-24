@@ -19,6 +19,7 @@ import com.paas.zk.zookeeper.ZKClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -107,11 +108,16 @@ public class ManagerController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/tslist", method = RequestMethod.GET)
-    public RspVo tsList() {
-        List<PaasServiceInstance> list = paasServiceInstanceService.getInstanceList();
+    @RequestMapping(value = "/tslist", method = RequestMethod.POST)
+    public RspVo tsList(@RequestBody JSONObject param) {
+        LOGGER.info("tslist 请求参数：{}", param.toJSONString());
+        Page<PaasServiceInstance> page = paasServiceInstanceService.getInstanceListByCondition(
+                param.getString("serviceId"), param.getString("note"),
+                param.getInteger("start"), param.getInteger("pagesize"));
 
         JSONArray array = new JSONArray();
+
+        List<PaasServiceInstance> list = page.getContent();
 
         for (PaasServiceInstance paasServiceInstance : list) {
             JSONObject jsonObject = new JSONObject();
@@ -122,7 +128,14 @@ public class ManagerController {
             array.add(jsonObject);
         }
 
-        return RspVo.success(array);
+        JSONObject result = new JSONObject();
+        result.put("list", array);
+        result.put("totalPages", page.getTotalPages());
+        result.put("totalEl", page.getTotalElements());
+        result.put("curPage", param.getInteger("start"));
+        result.put("pageSize", param.getInteger("pagesize"));
+
+        return RspVo.success(result);
     }
 
 

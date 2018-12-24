@@ -20,6 +20,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
+        LOGGER.info("session_id:"+session.getId());
         if (session.getAttribute(ServiceConstants.SESSION_KEY) != null) {
             return true;
         }
@@ -28,7 +29,11 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
         try {
             response.setContentType("application/json; charset=UTF-8");
             response.setCharacterEncoding("utf-8");
-            response.setStatus(401);
+//            response.setStatus(401);
+            response.addHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+            response.addHeader("Access-Control-Allow-Credentials", "true");
+            response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            response.addHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With,X_Requested_With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With");
             writer = response.getWriter();
             String s = JSONObject.toJSONString(RspVo.error(ServiceConstants.INFO.code_fail + "", "登陆超时或者尚未登陆, 请登陆!"));
             writer.write(s);
