@@ -121,8 +121,8 @@ public class ManagerController {
 
         for (PaasServiceInstance paasServiceInstance : list) {
             JSONObject jsonObject = new JSONObject();
-            String[] s = paasServiceInstance.getServiceId().split("-");
-            jsonObject.put("type", s[0] + s[1]);
+            String[] s = paasServiceInstance.getServiceId().split(ServiceConstants.SPLIT_STR);
+            jsonObject.put("type", s[0] == null ? "" : s[0]);
             jsonObject.put("servicerId", paasServiceInstance.getServiceId());
             jsonObject.put("remark", paasServiceInstance.getRemark());
             array.add(jsonObject);

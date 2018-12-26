@@ -6,6 +6,7 @@ import com.paas.web.service.IPaasServiceInstanceService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -59,7 +60,10 @@ public class PaasServiceInstanceServiceImpl implements IPaasServiceInstanceServi
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
         };
-        Pageable pageable = PageRequest.of(start - 1, pageSize);
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "serviceId");
+
+        Pageable pageable = PageRequest.of(start - 1, pageSize, sort);
 
         Page<PaasServiceInstance> page = paasServiceInstanceRepository.findAll(querySpecifi, pageable);
 
