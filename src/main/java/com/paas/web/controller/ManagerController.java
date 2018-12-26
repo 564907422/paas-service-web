@@ -56,7 +56,7 @@ public class ManagerController {
 
     @ResponseBody
     @RequestMapping(value = "/open", method = RequestMethod.POST, produces = "application/json")
-    public String open(@RequestBody ServiceVo serviceVo) {
+    public RspVo open(@RequestBody ServiceVo serviceVo) {
         LOGGER.debug("--------/open--{},{},{}---------",
                 serviceVo.getBuizCode(),
                 serviceVo.getType(),
@@ -69,7 +69,7 @@ public class ManagerController {
         LOGGER.debug("1.--------获得serviceId----buizCode:{}--serviceType:{}-----", buizCode, serviceType);
         if (!validate(buizCode, serviceType)) {
             LOGGER.error("1.1----非法参数--buizCode:{}--serviceType:{}----", buizCode, serviceType);
-            return ServiceConstants.OPEN_ERROR_STR;
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
         }
         /**serviceType  99时，buizCode是已经拼好的serviceId*/
         String type = getType(serviceType, buizCode);
@@ -82,13 +82,13 @@ public class ManagerController {
             //校验服务是否已经存在
             if (paasServiceInstanceService.existInstance(serviceId)) {
                 LOGGER.warn("1.3--------serviceId:{} already exist-------", serviceId);
-                return serviceId;
+                return RspVo.success(serviceId);
             }
             //2
             LOGGER.debug("2.--------获得serviceResource----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
             PaasServiceResource serviceResource = paasServiceResourceService.getPaasServiceResource(serviceType);
             if (serviceResource == null)
-                return ServiceConstants.OPEN_ERROR_STR;
+                return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
 //            LOGGER.debug("2.1--------处理server----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
 //            handleServer(buizCode, type, serviceId, serviceResource);
             LOGGER.debug("2.2--------添加zookeeper信息----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
@@ -99,11 +99,11 @@ public class ManagerController {
             addInstance(buizCode, type, serviceId, remark, serviceResource);
         } catch (Exception e) {
             LOGGER.error("", e);
-            return ServiceConstants.OPEN_ERROR_STR;
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
 
         }
 
-        return serviceId;
+        return RspVo.success(serviceId);
 
     }
 
