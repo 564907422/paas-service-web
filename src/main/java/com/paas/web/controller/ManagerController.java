@@ -142,7 +142,7 @@ public class ManagerController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/loginout", method = RequestMethod.POST)
+    @RequestMapping(value = "/loginout", method = RequestMethod.GET)
     public RspVo loginout(HttpServletRequest request, HttpServletResponse response) {
 
         HttpSession session = request.getSession();
