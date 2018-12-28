@@ -11,6 +11,7 @@ import com.paas.web.service.IPaasConfigService;
 import com.paas.web.service.IPaasServiceInstanceService;
 import com.paas.web.service.IPaasServiceResourceService;
 import com.paas.web.service.ISysUserService;
+import com.paas.web.utils.CookieUtils;
 import com.paas.web.utils.MD5Util;
 import com.paas.web.vo.LoginVo;
 import com.paas.web.vo.RspVo;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -109,7 +111,7 @@ public class ManagerController {
 
     @ResponseBody
     @RequestMapping(value = "/tslist", method = RequestMethod.POST)
-    public RspVo tsList(@RequestBody JSONObject param) {
+    public RspVo tsList(HttpServletRequest request, @RequestBody JSONObject param) {
         LOGGER.info("tslist 请求参数：{}", param.toJSONString());
         Page<PaasServiceInstance> page = paasServiceInstanceService.getInstanceListByCondition(
                 param.getString("serviceId"), param.getString("note"),
@@ -140,8 +142,18 @@ public class ManagerController {
 
 
     @ResponseBody
+    @RequestMapping(value = "/loginout", method = RequestMethod.POST)
+    public RspVo loginout(HttpServletRequest request, HttpServletResponse response) {
+
+        HttpSession session = request.getSession();
+        session.removeAttribute(ServiceConstants.SESSION_KEY);
+
+        return RspVo.success("success");
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public RspVo login(HttpServletRequest request, @RequestBody LoginVo vo) {
+    public RspVo login(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginVo vo) {
         if (StringUtils.isEmpty(vo.getUsername()) || StringUtils.isEmpty(vo.getPassword())) {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
         }
@@ -153,6 +165,7 @@ public class ManagerController {
 
         HttpSession session = request.getSession();
         session.setAttribute(ServiceConstants.SESSION_KEY, userDetails);
+
         return RspVo.success(userDetails);
     }
 

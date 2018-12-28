@@ -2,6 +2,7 @@ package com.paas.web.interceptors;
 
 import com.alibaba.fastjson.JSONObject;
 import com.paas.web.constants.ServiceConstants;
+import com.paas.web.utils.CookieUtils;
 import com.paas.web.vo.RspVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
             response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             response.addHeader("Access-Control-Allow-Headers", "Origin, No-Cache, X-Requested-With,X_Requested_With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, X-E4M-With");
             writer = response.getWriter();
-            String s = JSONObject.toJSONString(RspVo.error(ServiceConstants.INFO.code_fail + "", "登陆超时或者尚未登陆, 请登陆!"));
+            String s = JSONObject.toJSONString(RspVo.error(ServiceConstants.INFO.no_login + "", "登陆超时或者尚未登陆, 请登陆!"));
             writer.write(s);
             writer.flush();
         } catch (Exception e) {

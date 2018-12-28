@@ -37,6 +37,7 @@ public class ServiceConstants {
     public static final class INFO {
         public static final int code_success = 10000;
         public static final int code_fail = 20000;
+        public static final int no_login = 30000;
         public static final String msg_success = "操作成功！";
         public static final String msg_fail = "操作失败！";
         public static final String msg_null = "数据为空！";
