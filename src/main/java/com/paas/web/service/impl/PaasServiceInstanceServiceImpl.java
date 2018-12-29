@@ -69,4 +69,9 @@ public class PaasServiceInstanceServiceImpl implements IPaasServiceInstanceServi
 
         return page;
     }
+
+    @Override
+    public PaasServiceInstance findByServiceId(String serviceId) {
+        return paasServiceInstanceRepository.findByServiceId(serviceId);
+    }
 }

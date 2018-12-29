@@ -11,7 +11,6 @@ import com.paas.web.service.IPaasConfigService;
 import com.paas.web.service.IPaasServiceInstanceService;
 import com.paas.web.service.IPaasServiceResourceService;
 import com.paas.web.service.ISysUserService;
-import com.paas.web.utils.CookieUtils;
 import com.paas.web.utils.MD5Util;
 import com.paas.web.vo.LoginVo;
 import com.paas.web.vo.RspVo;
@@ -51,8 +50,6 @@ public class ManagerController {
     IPaasConfigService paasConfigService;
     @Autowired
     ISysUserService sysUserService;
-//    @Autowired
-//    MyUserDetailsService myUserDetailsService;
 
     private ZKClient zkClient;
 
@@ -170,6 +167,39 @@ public class ManagerController {
     }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/detail", method = RequestMethod.GET)
+    public RspVo detail(HttpServletRequest request, String serviceId) {
+        LOGGER.debug("/detail,请求参数，serviceId: {}", serviceId);
+        if (StringUtils.isEmpty(serviceId)) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
+        }
+
+        PaasServiceInstance paasServiceInstance = paasServiceInstanceService.findByServiceId(serviceId);
+        return RspVo.success(paasServiceInstance);
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public RspVo update(HttpServletRequest request, JSONObject param) {
+        LOGGER.debug("/update,请求参数，param: {}", param.toJSONString());
+        String serviceId = param.getString("serviceId");
+        if (StringUtils.isEmpty(serviceId)) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
+        }
+
+        PaasServiceInstance paasServiceInstance = paasServiceInstanceService.findByServiceId(serviceId);
+        if (paasServiceInstance == null) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
+        }
+
+
+
+        return RspVo.success("");
+    }
+
+
     private boolean validate(String buizCode, Byte serviceType) {
         if (StringUtils.isEmpty(buizCode))
             return false;
@@ -248,7 +278,7 @@ public class ManagerController {
     private String getInfoValue(PaasServiceResource serviceResource, String type,
                                 String buizCode, String serviceId) {
         if ("mq".equals(type)) {
-//            return getMqConfig(serviceResource, buizCode);
+            return getMqConfig(serviceResource, buizCode);
         }
         Map<String, Object> info = new HashMap<String, Object>();
         info.put("servers", serviceResource.getServers());
@@ -257,6 +287,41 @@ public class ManagerController {
         info.put("conf", getClientConf4Map(type, buizCode, serviceId));
 
         return JSON.toJSONString(info);
+    }
+
+    // {"username":"bbtree","password":"hyww@1z3",
+    // "port":5672,"host":"114.55.104.39",
+    // "exchange":"","routings":[]}
+    private String getMqConfig(PaasServiceResource serviceResource, String bizCode) {
+        LOGGER.debug(" --> gernenate mq config for {}, server:{}, base:{}", bizCode,
+                serviceResource.getServers(),
+                serviceResource.getServerInfo());
+        Map<String, Object> map = (Map<String, Object>) JSONObject.parse(serviceResource.getServerInfo());
+        String servers = serviceResource.getServers();
+        if (!servers.contains(",")) {
+            String[] ipPort = servers.split(":");
+            map.put("host", ipPort[0]);
+            map.put("port", ipPort[1]);
+        } else {
+            // TODO not support
+            LOGGER.warn("---> can not support servers: {}", servers);
+        }
+        map.put("exchange", bizCode + "_ex_" + UUID.randomUUID().toString().replaceAll("-", ""));
+        Map<String, String> rout = new HashMap<String, String>();
+        rout.put("count", "1");
+        rout.put("key", bizCode + "_key_" + UUID.randomUUID().toString().replaceAll("-", ""));
+        rout.put("queue", bizCode + "_queue_" + UUID.randomUUID().toString().replaceAll("-", ""));
+        ((List) map.get("routings")).add(rout);
+
+        String resultJson = JSON.toJSONString(map);
+        LOGGER.debug(" --> gernenate mq config: {}", resultJson);
+        return resultJson;
+
+//        return "{\"username\":\"bbtree\",\"password\":\"hyww@1z3\",\"port\":5672," +
+//                "\"host\":\"114.55.104.39\"," +
+//                "\"exchange\":\"bbtree_ad_pv_exchange\"," +
+//                "\"routings\":[{\"count\":1,\"key\":\"ad_exposure_key\",\"queue\":\"bbtree_ad_pv_queue\"}]," +
+//                "\"consumerThreads\":10}";
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -13,4 +13,6 @@ public interface IPaasServiceInstanceService {
     List<PaasServiceInstance> getInstanceList();
 
     Page<PaasServiceInstance> getInstanceListByCondition(String serviceId, String note, Integer start, Integer pageSize);
+
+    PaasServiceInstance findByServiceId(String serviceId);
 }

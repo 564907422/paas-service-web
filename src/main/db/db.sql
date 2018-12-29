@@ -29,3 +29,11 @@ CREATE TABLE `paas_service_resource` (
   `status` char(1) DEFAULT NULL COMMENT '1有效 ',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='服务的资源信息表';
+
+
+CREATE TABLE `sys_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) DEFAULT NULL COMMENT '用户名',
+  `password` varchar(100) DEFAULT NULL COMMENT '密码',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

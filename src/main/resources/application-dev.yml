@@ -8,6 +8,8 @@ spring:
   devtools:
     restart:
       enabled: true
+  jpa:
+    show-sql: true
 
 logging:
   file: /home/darren/logs/paas-service-web.log
@@ -21,4 +23,3 @@ logging:
 
 server:
   port: 8085
-
