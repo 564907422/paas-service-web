@@ -14,6 +14,7 @@ import com.paas.web.service.ISysUserService;
 import com.paas.web.utils.MD5Util;
 import com.paas.web.vo.LoginVo;
 import com.paas.web.vo.RspVo;
+import com.paas.web.vo.ServiceUpdateVo;
 import com.paas.web.vo.ServiceVo;
 import com.paas.zk.zookeeper.ZKClient;
 import org.slf4j.Logger;
@@ -182,10 +183,10 @@ public class ManagerController {
 
     @ResponseBody
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public RspVo update(HttpServletRequest request, JSONObject param) {
-        LOGGER.debug("/update,请求参数，param: {}", param.toJSONString());
-        String serviceId = param.getString("serviceId");
-        if (StringUtils.isEmpty(serviceId)) {
+    public RspVo update(HttpServletRequest request, @RequestBody ServiceUpdateVo param) throws Exception {
+        LOGGER.debug("/update,请求参数，param: {}", JSON.toJSONString(param));
+        String serviceId = param.getServiceId();
+        if (StringUtils.isEmpty(serviceId) || StringUtils.isEmpty(param.getConfigInfo())) {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
         }
 
@@ -194,9 +195,36 @@ public class ManagerController {
             return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
         }
 
+        if (zkClient == null) {
+            String zkUrl = paasConfigService.getInnerZk();
+            zkClient = new ZKClient(zkUrl, ServiceConstants.ZK_TIMEOUT);
+        }
+        if (zkClient == null) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "请检查zk");
+        }
+
+        String[] patharrs = serviceId.split("-");
+        String path = ServiceConstants.ZK_PATH_PRE + ServiceConstants.ZK_PATH_SPLIT
+                + patharrs[0] + ServiceConstants.ZK_PATH_SPLIT + patharrs[1]
+                + ServiceConstants.ZK_PATH_SPLIT + serviceId;
+        LOGGER.debug("组装path---------------->>{}", path);
+        if (zkClient.exists(path)) {
+            //修改zookeeper
+            zkClient.setNodeData(path, param.getConfigInfo());
+            LOGGER.debug("更新zk信息：path:{}", path);
+        } else {
+            zkClient.createNode(path, param.getConfigInfo());
+            LOGGER.debug("创建zk信息：path:{}", path);
+        }
+
+        //更新数据库信息
+        PaasServiceInstance updateObj = new PaasServiceInstance();
+        updateObj.setServiceId(serviceId);
+        updateObj.setServerInfo(param.getConfigInfo());
+        paasServiceInstanceService.update(updateObj);
 
 
-        return RspVo.success("");
+        return RspVo.success("success");
     }
 
 

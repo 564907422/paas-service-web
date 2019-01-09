@@ -1,0 +1,25 @@
+#datasource
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://cdb-7ud3tn8v.gz.tencentcdb.com:10083/paas?useUnicode=true&characterEncoding=utf-8&autoReconnect=true
+    username: root
+    password: root564907422
+  devtools:
+    restart:
+      enabled: true
+  jpa:
+    show-sql: true
+
+logging:
+  file: /data/logs/paas-service-web/paas-service-web.log
+  level:
+    com:
+      paas: debug
+    org:
+      springframework:
+        web: debug
+      hibernate: debug
+
+server:
+  port: 8085
