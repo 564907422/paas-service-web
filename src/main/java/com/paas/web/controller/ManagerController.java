@@ -177,7 +177,14 @@ public class ManagerController {
         }
 
         PaasServiceInstance paasServiceInstance = paasServiceInstanceService.findByServiceId(serviceId);
-        return RspVo.success(paasServiceInstance);
+        Map<String, Map> resultmap = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
+        map.put("servers", paasServiceInstance.getServers());
+        map.put("serverInfo", StringUtils.isEmpty(paasServiceInstance.getServerInfo()) ? "" : paasServiceInstance.getServerInfo());
+        map.put("conf", JSONObject.parse(paasServiceInstance.getClientConf()));
+        resultmap.put("serverInfo", map);
+        LOGGER.info("serviceInfo: {}", JSON.toJSON(resultmap));
+        return RspVo.success(resultmap);
     }
 
 
@@ -218,11 +225,13 @@ public class ManagerController {
         }
 
         //更新数据库信息
+        JSONObject configJson = JSONObject.parseObject(param.getConfigInfo());
         PaasServiceInstance updateObj = new PaasServiceInstance();
         updateObj.setServiceId(serviceId);
-        updateObj.setServerInfo(param.getConfigInfo());
+        updateObj.setServerInfo(configJson.getString("serverInfo"));
+        updateObj.setServers(configJson.getString("servers"));
+        updateObj.setClientConf(configJson.getString("conf"));
         paasServiceInstanceService.update(updateObj);
-
 
         return RspVo.success("success");
     }

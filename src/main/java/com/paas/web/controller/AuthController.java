@@ -55,6 +55,7 @@ public class AuthController {
             }
             //zookeeper上服务节点存在为正常
             if (zkClient.exists(path)) {
+                logger.info("serviceId:{} , values: {}", serviceId, zkClient.getNodeData(path));
                 vo.setServiceId(serviceId);
                 vo.setZkAdress(zkUrl);
             }

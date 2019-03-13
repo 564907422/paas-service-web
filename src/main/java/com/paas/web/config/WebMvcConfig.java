@@ -19,15 +19,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         //登录验证拦截器
-        InterceptorRegistration addInterceptor = registry.addInterceptor(loginInterceptor);
+        InterceptorRegistration addloginInterceptor = registry.addInterceptor(loginInterceptor);
 
         // 排除配置
-        addInterceptor.excludePathPatterns("/error");
-        addInterceptor.excludePathPatterns("/paas/manager/login");
-        addInterceptor.excludePathPatterns("/paas/manager/loginout");
+        addloginInterceptor.excludePathPatterns("/error");
+        addloginInterceptor.excludePathPatterns("/paas/manager/login");
+        addloginInterceptor.excludePathPatterns("/paas/manager/loginout");
+        addloginInterceptor.excludePathPatterns("/paas/auth/service");
 
         // 拦截配置
-        addInterceptor.addPathPatterns("/**");
+        addloginInterceptor.addPathPatterns("/**");
 
         //跨域拦截器
         InterceptorRegistration addCorsInterceptor = registry.addInterceptor(corsInterceptor);
