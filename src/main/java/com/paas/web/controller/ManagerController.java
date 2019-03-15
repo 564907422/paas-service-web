@@ -153,12 +153,12 @@ public class ManagerController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public RspVo login(HttpServletRequest request, HttpServletResponse response, @RequestBody LoginVo vo) {
         if (StringUtils.isEmpty(vo.getUsername()) || StringUtils.isEmpty(vo.getPassword())) {
-            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误,帐号密码必填");
         }
 
         SysUser userDetails = sysUserService.findByUsername(vo.getUsername());
         if (userDetails == null || !MD5Util.encode(vo.getPassword()).equals(userDetails.getPassword())) {
-            return RspVo.error(ServiceConstants.INFO.code_fail + "", "登录失败");
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "登录失败,帐号密码有误");
         }
 
         HttpSession session = request.getSession();

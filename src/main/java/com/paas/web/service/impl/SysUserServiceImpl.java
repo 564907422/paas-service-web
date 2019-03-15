@@ -14,11 +14,6 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Override
     public SysUser findByUsername(String username) {
-//        return sysUserRepository.findByUsername(username);
-        SysUser user = new SysUser();
-        user.setId(1);
-        user.setUsername("root");
-        user.setPassword(MD5Util.encode("123456"));
-        return user;
+        return sysUserRepository.findByUsername(username);
     }
 }
