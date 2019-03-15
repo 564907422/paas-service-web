@@ -226,12 +226,10 @@ public class ManagerController {
 
         //更新数据库信息
         JSONObject configJson = JSONObject.parseObject(param.getConfigInfo());
-        PaasServiceInstance updateObj = new PaasServiceInstance();
-        updateObj.setServiceId(serviceId);
-        updateObj.setServerInfo(configJson.getString("serverInfo"));
-        updateObj.setServers(configJson.getString("servers"));
-        updateObj.setClientConf(configJson.getString("conf"));
-        paasServiceInstanceService.update(updateObj);
+        paasServiceInstance.setServerInfo(configJson.getString("serverInfo"));
+        paasServiceInstance.setServers(configJson.getString("servers"));
+        paasServiceInstance.setClientConf(configJson.getString("conf"));
+        paasServiceInstanceService.update(paasServiceInstance);
 
         return RspVo.success("success");
     }
