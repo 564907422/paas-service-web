@@ -4,13 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.paas.web.constants.ServiceConstants;
+import com.paas.web.domain.PaasInstanceLog;
 import com.paas.web.domain.PaasServiceInstance;
 import com.paas.web.domain.PaasServiceResource;
 import com.paas.web.domain.SysUser;
-import com.paas.web.service.IPaasConfigService;
-import com.paas.web.service.IPaasServiceInstanceService;
-import com.paas.web.service.IPaasServiceResourceService;
-import com.paas.web.service.ISysUserService;
+import com.paas.web.service.*;
 import com.paas.web.utils.MD5Util;
 import com.paas.web.vo.LoginVo;
 import com.paas.web.vo.RspVo;
@@ -49,7 +47,9 @@ public class ManagerController {
     IPaasServiceResourceService paasServiceResourceService;
     @Resource
     IPaasConfigService paasConfigService;
-    @Autowired
+    @Resource
+    IPaasInstanceLogService paasInstanceLogService;
+    @Resource
     ISysUserService sysUserService;
 
     private ZKClient zkClient;
@@ -224,6 +224,12 @@ public class ManagerController {
             LOGGER.debug("创建zk信息：path:{}", path);
         }
 
+        //记录更新前版本信息
+        JSONObject snapshot = new JSONObject();
+        snapshot.put("serverInfo", paasServiceInstance.getServerInfo());
+        snapshot.put("servers", paasServiceInstance.getServers());
+        snapshot.put("conf", paasServiceInstance.getClientConf());
+
         //更新数据库信息
         JSONObject configJson = JSONObject.parseObject(param.getConfigInfo());
         paasServiceInstance.setServerInfo(configJson.getString("serverInfo"));
@@ -231,8 +237,20 @@ public class ManagerController {
         paasServiceInstance.setClientConf(configJson.getString("conf"));
         paasServiceInstanceService.update(paasServiceInstance);
 
+        //记录日志
+        PaasInstanceLog log = new PaasInstanceLog();
+        log.setBeforeVesion(snapshot.toString());
+        log.setAfterVersion(configJson.toString());
+        log.setCreateTime(new Timestamp(System.currentTimeMillis()));
+        SysUser user = (SysUser) request.getSession().getAttribute(ServiceConstants.SESSION_KEY);
+        log.setUserId(user.getId());
+        paasInstanceLogService.insert(log);
+
         return RspVo.success("success");
     }
+
+
+    //******************************* 辅助方法 ****************************************
 
 
     private boolean validate(String buizCode, Byte serviceType) {
