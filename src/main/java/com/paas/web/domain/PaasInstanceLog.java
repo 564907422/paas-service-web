@@ -17,6 +17,8 @@ public class PaasInstanceLog {
     private Timestamp createTime;
     @Column(name = "user_id")
     private Integer userId;
+    @Column(name = "service_id")
+    private String serviceId;
 
     public Integer getId() {
         return id;
@@ -56,5 +58,13 @@ public class PaasInstanceLog {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
     }
 }

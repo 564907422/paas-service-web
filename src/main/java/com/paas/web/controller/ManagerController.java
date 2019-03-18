@@ -245,6 +245,7 @@ public class ManagerController {
         log.setCreateTime(new Timestamp(System.currentTimeMillis()));
         SysUser user = (SysUser) request.getSession().getAttribute(ServiceConstants.SESSION_KEY);
         log.setUserId(user.getId());
+        log.setServiceId(serviceId);
         paasInstanceLogService.insert(log);
 
         return RspVo.success("success");
