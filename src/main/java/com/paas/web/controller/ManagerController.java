@@ -179,7 +179,8 @@ public class ManagerController {
         Map<String, Map> resultmap = new HashMap<>();
         Map<String, Object> map = new HashMap<>();
         map.put("servers", paasServiceInstance.getServers());
-        map.put("serverInfo", StringUtils.isEmpty(paasServiceInstance.getServerInfo()) ? "" : paasServiceInstance.getServerInfo());
+        map.put("serverInfo", StringUtils.isEmpty(paasServiceInstance.getServerInfo()) ? ""
+                : JSONObject.parse(paasServiceInstance.getServerInfo()));
         map.put("conf", JSONObject.parse(paasServiceInstance.getClientConf()));
         resultmap.put("serverInfo", map);
         LOGGER.info("serviceInfo: {}", JSON.toJSON(resultmap));
@@ -226,7 +227,8 @@ public class ManagerController {
         //记录更新前版本信息
         JSONObject snapshot = new JSONObject();
         snapshot.put("serverInfo", paasServiceInstance.getServerInfo());
-        snapshot.put("servers", paasServiceInstance.getServers());
+        snapshot.put("servers", StringUtils.isEmpty(paasServiceInstance.getServers()) ? ""
+                : JSONObject.parse(paasServiceInstance.getServers()));
         snapshot.put("conf", StringUtils.isEmpty(paasServiceInstance.getClientConf()) ? ""
                 : JSONObject.parse(paasServiceInstance.getClientConf()));
         String oldSnapShot = snapshot.toString();
