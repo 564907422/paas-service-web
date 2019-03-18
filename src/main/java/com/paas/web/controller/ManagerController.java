@@ -228,8 +228,9 @@ public class ManagerController {
         JSONObject snapshot = new JSONObject();
         snapshot.put("serverInfo", paasServiceInstance.getServerInfo());
         snapshot.put("servers", paasServiceInstance.getServers());
-        snapshot.put("conf", paasServiceInstance.getClientConf());
-
+        snapshot.put("conf", StringUtils.isEmpty(paasServiceInstance.getClientConf()) ? ""
+                : JSONObject.parse(paasServiceInstance.getClientConf()));
+        String oldSnapShot = snapshot.toString();
         //更新数据库信息
         JSONObject configJson = JSONObject.parseObject(param.getConfigInfo());
         paasServiceInstance.setServerInfo(configJson.getString("serverInfo"));
@@ -239,7 +240,7 @@ public class ManagerController {
 
         //记录日志
         PaasInstanceLog log = new PaasInstanceLog();
-        log.setBeforeVesion(snapshot.toString());
+        log.setBeforeVersion(oldSnapShot);
         log.setAfterVersion(configJson.toString());
         log.setCreateTime(new Timestamp(System.currentTimeMillis()));
         SysUser user = (SysUser) request.getSession().getAttribute(ServiceConstants.SESSION_KEY);

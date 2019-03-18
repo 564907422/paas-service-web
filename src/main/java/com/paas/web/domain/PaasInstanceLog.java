@@ -9,7 +9,9 @@ public class PaasInstanceLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String beforeVesion;
+    @Column(name = "before_version")
+    private String beforeVersion;
+    @Column(name = "after_version")
     private String afterVersion;
     @Column(name = "create_time")
     private Timestamp createTime;
@@ -24,12 +26,12 @@ public class PaasInstanceLog {
         this.id = id;
     }
 
-    public String getBeforeVesion() {
-        return beforeVesion;
+    public String getBeforeVersion() {
+        return beforeVersion;
     }
 
-    public void setBeforeVesion(String beforeVesion) {
-        this.beforeVesion = beforeVesion;
+    public void setBeforeVersion(String beforeVersion) {
+        this.beforeVersion = beforeVersion;
     }
 
     public String getAfterVersion() {
