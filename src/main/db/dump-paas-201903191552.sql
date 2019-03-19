@@ -56,7 +56,7 @@ CREATE TABLE `paas_instance_log` (
   `service_id` varchar(200) DEFAULT NULL COMMENT '服务id',
   `create_time` datetime NOT NULL COMMENT '操作时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,7 @@ CREATE TABLE `paas_instance_log` (
 
 LOCK TABLES `paas_instance_log` WRITE;
 /*!40000 ALTER TABLE `paas_instance_log` DISABLE KEYS */;
-INSERT INTO `paas_instance_log` VALUES (1,'{\"servers\":\"10.0.0.29:6379\",\"conf\":{\"maxIdle\":100,\"testOnBorrow\":\"false\",\"testOnReturn\":\"true\",\"maxWait\":3000,\"maxActive\":1024}}','{\"servers\":\"10.0.0.29:6379\",\"serverInfo\":\"\",\"conf\":{\"maxIdle\":100,\"testOnBorrow\":\"false\",\"testOnReturn\":\"true\",\"maxWait\":3000,\"maxActive\":1024}}',1,'biz_t1-cache-349868d1aa67415689208c806431cc15','2019-03-18 17:12:07');
+INSERT INTO `paas_instance_log` VALUES (1,'{\"servers\":\"10.0.0.29:6379\",\"conf\":{\"maxIdle\":100,\"testOnBorrow\":\"false\",\"testOnReturn\":\"true\",\"maxWait\":3000,\"maxActive\":1024}}','{\"servers\":\"10.0.0.29:6379\",\"serverInfo\":\"\",\"conf\":{\"maxIdle\":100,\"testOnBorrow\":\"false\",\"testOnReturn\":\"true\",\"maxWait\":3000,\"maxActive\":1024}}',1,'biz_t1-cache-349868d1aa67415689208c806431cc15','2019-03-18 17:12:07'),(2,'{\"password\":\"hyww@1z3\",\"port\":\"5672\",\"host\":\"114.55.104.39\",\"routings\":[{\"count\":\"1\",\"key\":\"biz_t2_key_144912b0fe1a475fae18061d1fca5254\",\"queue\":\"biz_t2_queue_5abef61fcf554a66a3c6c62e22928236\"}],\"exchange\":\"biz_t2_ex_cdc2f02b99ca41699d6a11c88e73761c\",\"username\":\"bbtree\"}','{\"password\":\"hyww@1z3\",\"port\":\"5672\",\"host\":\"114.55.104.39\",\"routings\":[{\"count\":\"2\",\"key\":\"biz_t2_key_144912b0fe1a475fae18061d1fca5254\",\"queue\":\"biz_t2_queue_5abef61fcf554a66a3c6c62e22928236\"}],\"exchange\":\"biz_t2_ex_cdc2f02b99ca41699d6a11c88e73761c\",\"username\":\"bbtree\"}',1,'biz_t2-mq-0e02adf076524b26992dd571486bd5ca','2019-03-19 11:49:10'),(3,'{\"password\":\"hyww@1z3\",\"port\":\"5672\",\"host\":\"114.55.104.39\",\"routings\":[{\"count\":\"2\",\"key\":\"biz_t2_key_144912b0fe1a475fae18061d1fca5254\",\"queue\":\"biz_t2_queue_5abef61fcf554a66a3c6c62e22928236\"}],\"exchange\":\"biz_t2_ex_cdc2f02b99ca41699d6a11c88e73761c\",\"username\":\"bbtree\"}','{\"password\":\"hyww@1z3\",\"port\":\"5672\",\"host\":\"114.55.104.39\",\"routings\":[{\"count\":\"1\",\"key\":\"biz_t2_key_144912b0fe1a475fae18061d1fca5254\",\"queue\":\"biz_t2_queue_5abef61fcf554a66a3c6c62e22928236\"}],\"exchange\":\"biz_t2_ex_cdc2f02b99ca41699d6a11c88e73761c\",\"username\":\"bbtree\"}',1,'biz_t2-mq-0e02adf076524b26992dd571486bd5ca','2019-03-19 11:49:27');
 /*!40000 ALTER TABLE `paas_instance_log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -86,6 +86,7 @@ CREATE TABLE `paas_service_instance` (
   `begin_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   `remark` varchar(1000) DEFAULT NULL,
+  `content` varchar(500) DEFAULT NULL COMMENT '完整的配置内容，json格式，跟zk节点内容一致',
   PRIMARY KEY (`id`),
   UNIQUE KEY `paas_service_instance_service_id_IDX` (`service_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='服务的用户实例表';
@@ -97,7 +98,7 @@ CREATE TABLE `paas_service_instance` (
 
 LOCK TABLES `paas_service_instance` WRITE;
 /*!40000 ALTER TABLE `paas_service_instance` DISABLE KEYS */;
-INSERT INTO `paas_service_instance` VALUES (1,'biz_t1-cache-349868d1aa67415689208c806431cc15','10.0.0.29:6379','','{\"maxIdle\":100,\"testOnBorrow\":\"false\",\"testOnReturn\":\"true\",\"maxWait\":3000,\"maxActive\":1024}','1','2019-03-18 17:12:02',NULL,'用户中心缓存'),(2,'biz_t2-mq-adeea84c99f0432bb46056cd03335cce','114.55.104.39:5672','{\"username\":\"bbtree\",\"password\":\"hyww@1z3\",\"exchange\":\"\",\"routings\":[]}',NULL,'1','2019-03-18 17:12:27',NULL,'财务项目队列');
+INSERT INTO `paas_service_instance` VALUES (1,'biz_t2-mq-0e02adf076524b26992dd571486bd5ca','114.55.104.39:5672','{\"username\":\"bbtree\",\"password\":\"hyww@1z3\",\"exchange\":\"\",\"routings\":[]}',NULL,'1','2019-03-19 11:28:55',NULL,'缴费服务申请rabbitmq服务','{\"password\":\"hyww@1z3\",\"port\":\"5672\",\"host\":\"114.55.104.39\",\"routings\":[{\"count\":\"1\",\"key\":\"biz_t2_key_144912b0fe1a475fae18061d1fca5254\",\"queue\":\"biz_t2_queue_5abef61fcf554a66a3c6c62e22928236\"}],\"exchange\":\"biz_t2_ex_cdc2f02b99ca41699d6a11c88e73761c\",\"username\":\"bbtree\"}'),(2,'biz_t1-mq-19899952e4604a2391946f2b7bba877b','114.55.104.39:5672','{\"username\":\"bbtree\",\"password\":\"hyww@1z3\",\"exchange\":\"\",\"routings\":[]}',NULL,'1','2019-03-19 11:35:40',NULL,'测试申请队列信息','{\"password\":\"hyww@1z3\",\"port\":\"5672\",\"host\":\"114.55.104.39\",\"routings\":[{\"count\":\"1\",\"key\":\"biz_t1_key_f4150f97f31f492d9a09df6d61c0dc34\",\"queue\":\"biz_t1_queue_627ff0dfb3744e9eab1eb8da88b84741\"}],\"exchange\":\"biz_t1_ex_8634bfd7f352496886a895022b6a2317\",\"username\":\"bbtree\"}');
 /*!40000 ALTER TABLE `paas_service_instance` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -166,4 +167,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-18 17:26:32
+-- Dump completed on 2019-03-19 15:52:43
