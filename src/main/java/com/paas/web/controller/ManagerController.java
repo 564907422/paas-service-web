@@ -88,14 +88,12 @@ public class ManagerController {
             PaasServiceResource serviceResource = paasServiceResourceService.getPaasServiceResource(serviceType);
             if (serviceResource == null)
                 return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
-//            LOGGER.debug("2.1--------处理server----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
-//            handleServer(buizCode, type, serviceId, serviceResource);
             LOGGER.debug("2.2--------添加zookeeper信息----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
-            addzkConf(buizCode, type, serviceId, serviceResource);
+            String content = addzkConf(buizCode, type, serviceId, serviceResource);
 
             //3  addInstance();
             LOGGER.debug("3--------沉淀用户实例信息----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
-            addInstance(buizCode, type, serviceId, remark, serviceResource);
+            addInstance(buizCode, type, serviceId, remark, serviceResource, content);
         } catch (Exception e) {
             LOGGER.error("", e);
             return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
@@ -176,15 +174,11 @@ public class ManagerController {
         }
 
         PaasServiceInstance paasServiceInstance = paasServiceInstanceService.findByServiceId(serviceId);
-        Map<String, Map> resultmap = new HashMap<>();
-        Map<String, Object> map = new HashMap<>();
-        map.put("servers", paasServiceInstance.getServers());
-        map.put("serverInfo", StringUtils.isEmpty(paasServiceInstance.getServerInfo()) ? ""
-                : JSONObject.parse(paasServiceInstance.getServerInfo()));
-        map.put("conf", JSONObject.parse(paasServiceInstance.getClientConf()));
-        resultmap.put("serverInfo", map);
-        LOGGER.info("serviceInfo: {}", JSON.toJSON(resultmap));
-        return RspVo.success(resultmap);
+        if (paasServiceInstance == null || StringUtils.isEmpty(paasServiceInstance.getServiceId())) {
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数有误");
+        }
+
+        return RspVo.success(JSONObject.parseObject(paasServiceInstance.getContent()));
     }
 
 
@@ -225,24 +219,15 @@ public class ManagerController {
         }
 
         //记录更新前版本信息
-        JSONObject snapshot = new JSONObject();
-        snapshot.put("serverInfo", paasServiceInstance.getServerInfo());
-        snapshot.put("servers", StringUtils.isEmpty(paasServiceInstance.getServers()) ? ""
-                : JSONObject.parse(paasServiceInstance.getServers()));
-        snapshot.put("conf", StringUtils.isEmpty(paasServiceInstance.getClientConf()) ? ""
-                : JSONObject.parse(paasServiceInstance.getClientConf()));
-        String oldSnapShot = snapshot.toString();
+        String oldSnapShot = paasServiceInstance.getContent();
         //更新数据库信息
-        JSONObject configJson = JSONObject.parseObject(param.getConfigInfo());
-        paasServiceInstance.setServerInfo(configJson.getString("serverInfo"));
-        paasServiceInstance.setServers(configJson.getString("servers"));
-        paasServiceInstance.setClientConf(configJson.getString("conf"));
+        paasServiceInstance.setContent(param.getConfigInfo());
         paasServiceInstanceService.update(paasServiceInstance);
 
         //记录日志
         PaasInstanceLog log = new PaasInstanceLog();
         log.setBeforeVersion(oldSnapShot);
-        log.setAfterVersion(configJson.toString());
+        log.setAfterVersion(param.getConfigInfo());
         log.setCreateTime(new Timestamp(System.currentTimeMillis()));
         SysUser user = (SysUser) request.getSession().getAttribute(ServiceConstants.SESSION_KEY);
         log.setUserId(user.getId());
@@ -312,8 +297,8 @@ public class ManagerController {
     }
 
 
-    private void addzkConf(String buizCode, String type, String serviceId,
-                           PaasServiceResource serviceResource) throws Exception {
+    private String addzkConf(String buizCode, String type, String serviceId,
+                             PaasServiceResource serviceResource) throws Exception {
         if (zkClient == null) {
             String zkUrl = paasConfigService.getInnerZk();
             zkClient = new ZKClient(zkUrl, ServiceConstants.ZK_TIMEOUT);
@@ -326,8 +311,11 @@ public class ManagerController {
                 + ServiceConstants.ZK_PATH_SPLIT + serviceId;
         String value = getInfoValue(serviceResource, type, buizCode, serviceId);
         LOGGER.debug("-----------conf value:{}--------", value);
-        if (!zkClient.exists(path))
+        if (!zkClient.exists(path)) {
             zkClient.createNode(path, value);
+        }
+
+        return value;
     }
 
 
@@ -455,7 +443,7 @@ public class ManagerController {
 
 
     private void addInstance(String buizCode, String type, String serviceId, String remark,
-                             PaasServiceResource serviceResource) {
+                             PaasServiceResource serviceResource, String content) {
         PaasServiceInstance serviceInstance = new PaasServiceInstance();
         serviceInstance.setStatus(ServiceConstants.STATUS_VA);
         serviceInstance.setServers(serviceResource.getServers());
@@ -464,6 +452,7 @@ public class ManagerController {
         serviceInstance.setServiceId(serviceId);
         serviceInstance.setBeginTime(new Timestamp(System.currentTimeMillis()));
         serviceInstance.setRemark(remark);
+        serviceInstance.setContent(content);
         paasServiceInstanceService.insert(serviceInstance);
     }
 

@@ -28,8 +28,10 @@ public class PaasServiceInstance {
 
     @Column(name = "end_time")
     private Timestamp endTime;
-    
+
     private String remark;
+
+    private String content;
 
     public Integer getId() {
         return id;
@@ -95,12 +97,19 @@ public class PaasServiceInstance {
         this.endTime = endTime;
     }
 
-	public String getRemark() {
-		return remark;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-    
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }
