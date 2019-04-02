@@ -4,7 +4,7 @@ export LANG="en_US.UTF-8"
 
 ## 分支名
 tag_name='dev'
-IN_TAG=$tag_namei
+IN_TAG=$tag_name
 ## git地址
 GIT_DIR='git@github.com:564907422/paas-service-web.git'
 ## 项目名
