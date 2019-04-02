@@ -2,13 +2,20 @@
 export LANG="en_US.UTF-8"  
 #export PS4='[+] $(date +%H:%M:%S) info (@$LINENO): '
 
+## 分支名
 tag_name='dev'
-IN_TAG=$tag_name
+IN_TAG=$tag_namei
+## git地址
 GIT_DIR='git@github.com:564907422/paas-service-web.git'
+## 项目名
 GIT_PROJ_NAME=$(echo $GIT_DIR|awk -F/ '$0=$NF'|awk -F\. '$0=$1')
+## 工作目录
 WORKSPACE='/home/darren/data'
+## 发版用户
 BUILD_USER='xiaozq'
+## 线上服务器地址
 HOST='192.144.172.239'
+## 服务器部署目录
 DEPLOY_DIR='/data/xiaoyaospace'
 
 echo $build_type
