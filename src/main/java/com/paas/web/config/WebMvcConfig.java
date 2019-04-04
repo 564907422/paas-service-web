@@ -23,6 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 排除配置
         addloginInterceptor.excludePathPatterns("/error");
+        addloginInterceptor.excludePathPatterns("/check");
         addloginInterceptor.excludePathPatterns("/paas/manager/login");
         addloginInterceptor.excludePathPatterns("/paas/manager/loginout");
         addloginInterceptor.excludePathPatterns("/paas/auth/service");
