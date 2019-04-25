@@ -33,6 +33,8 @@ public class PaasServiceInstance {
 
     private String content;
 
+    private String env;
+
     public Integer getId() {
         return id;
     }
@@ -111,5 +113,13 @@ public class PaasServiceInstance {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
     }
 }

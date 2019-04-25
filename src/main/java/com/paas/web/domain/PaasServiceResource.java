@@ -19,6 +19,8 @@ public class PaasServiceResource {
 
     private String status;
 
+    private String env;
+
     public Integer getId() {
         return id;
     }
@@ -57,5 +59,13 @@ public class PaasServiceResource {
 
     public void setStatus(String status) {
         this.status = status == null ? null : status.trim();
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
     }
 }

@@ -3,7 +3,7 @@ package com.paas.web.vo;
 import java.io.Serializable;
 
 
-public class ServiceVo implements Serializable{
+public class ServiceVo implements Serializable {
     /**
      * 业务编码
      */
@@ -15,7 +15,11 @@ public class ServiceVo implements Serializable{
     /**
      * 描述
      */
-    private String  remark;
+    private String remark;
+    /**
+     * 环境变量
+     */
+    private String env;
 
     public String getBuizCode() {
         return buizCode;
@@ -33,12 +37,19 @@ public class ServiceVo implements Serializable{
         this.type = type;
     }
 
-	public String getRemark() {
-		return remark;
-	}
+    public String getRemark() {
+        return remark;
+    }
 
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-    
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public String getEnv() {
+        return env;
+    }
+
+    public void setEnv(String env) {
+        this.env = env;
+    }
 }

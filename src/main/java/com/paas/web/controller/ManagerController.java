@@ -56,17 +56,19 @@ public class ManagerController {
     @ResponseBody
     @RequestMapping(value = "/open", method = RequestMethod.POST, produces = "application/json")
     public RspVo open(@RequestBody ServiceVo serviceVo) {
-        LOGGER.debug("--------/open--{},{},{}---------",
+        LOGGER.debug("--------/open--{},{},{},{}---------",
                 serviceVo.getBuizCode(),
                 serviceVo.getType(),
-                serviceVo.getRemark());
+                serviceVo.getRemark(),
+                serviceVo.getEnv());
 
         Byte serviceType = serviceVo.getType();
         String buizCode = serviceVo.getBuizCode();
         String remark = serviceVo.getRemark();
+        String env = serviceVo.getEnv();
         //1
         LOGGER.debug("1.--------获得serviceId----buizCode:{}--serviceType:{}-----", buizCode, serviceType);
-        if (!validate(buizCode, serviceType)) {
+        if (!validate(buizCode, serviceType, env)) {
             LOGGER.error("1.1----非法参数--buizCode:{}--serviceType:{}----", buizCode, serviceType);
             return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
         }
@@ -85,7 +87,7 @@ public class ManagerController {
             }
             //2
             LOGGER.debug("2.--------获得serviceResource----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
-            PaasServiceResource serviceResource = paasServiceResourceService.getPaasServiceResource(serviceType);
+            PaasServiceResource serviceResource = paasServiceResourceService.getPaasServiceResource(serviceType, env);
             if (serviceResource == null)
                 return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
             LOGGER.debug("2.2--------添加zookeeper信息----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
@@ -93,7 +95,7 @@ public class ManagerController {
 
             //3  addInstance();
             LOGGER.debug("3--------沉淀用户实例信息----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
-            addInstance(buizCode, type, serviceId, remark, serviceResource, content);
+            addInstance(buizCode, type, serviceId, remark, serviceResource, content, env);
         } catch (Exception e) {
             LOGGER.error("", e);
             return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
@@ -241,11 +243,16 @@ public class ManagerController {
     //******************************* 辅助方法 ****************************************
 
 
-    private boolean validate(String buizCode, Byte serviceType) {
-        if (StringUtils.isEmpty(buizCode))
+    private boolean validate(String buizCode, Byte serviceType, String env) {
+        if (StringUtils.isEmpty(buizCode)) {
             return false;
-        if (serviceType == null)
+        }
+        if (serviceType == null) {
             return false;
+        }
+        if (StringUtils.isEmpty(env)) {
+            return false;
+        }
         return true;
     }
 
@@ -443,7 +450,7 @@ public class ManagerController {
 
 
     private void addInstance(String buizCode, String type, String serviceId, String remark,
-                             PaasServiceResource serviceResource, String content) {
+                             PaasServiceResource serviceResource, String content, String env) {
         PaasServiceInstance serviceInstance = new PaasServiceInstance();
         serviceInstance.setStatus(ServiceConstants.STATUS_VA);
         serviceInstance.setServers(serviceResource.getServers());
@@ -453,6 +460,7 @@ public class ManagerController {
         serviceInstance.setBeginTime(new Timestamp(System.currentTimeMillis()));
         serviceInstance.setRemark(remark);
         serviceInstance.setContent(content);
+        serviceInstance.setEnv(env);
         paasServiceInstanceService.insert(serviceInstance);
     }
 

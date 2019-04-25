@@ -13,7 +13,7 @@ public class PaasServiceResourceImpl implements IPaasServiceResourceService {
     PaasServiceResourceRepository paasServiceResourceRepository;
 
     @Override
-    public PaasServiceResource getPaasServiceResource(Byte serviceType) {
-        return paasServiceResourceRepository.findByServiceTypeAndStatus(serviceType, "1");
+    public PaasServiceResource getPaasServiceResource(Byte serviceType, String env) {
+        return paasServiceResourceRepository.findByServiceTypeAndStatusAAndEnv(serviceType, "1", env);
     }
 }
