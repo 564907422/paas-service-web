@@ -23,3 +23,7 @@ logging:
 
 server:
   port: 8085
+
+com:
+  paas:
+    envs: local,dev,beta

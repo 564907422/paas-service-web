@@ -3,6 +3,7 @@ package com.paas.web.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.paas.web.config.SystemProperties;
 import com.paas.web.constants.ServiceConstants;
 import com.paas.web.domain.PaasInstanceLog;
 import com.paas.web.domain.PaasServiceInstance;
@@ -50,6 +51,8 @@ public class ManagerController {
     IPaasInstanceLogService paasInstanceLogService;
     @Resource
     ISysUserService sysUserService;
+    @Resource
+    SystemProperties systemProperties;
 
     private ZKClient zkClient;
 
@@ -70,7 +73,7 @@ public class ManagerController {
         LOGGER.debug("1.--------获得serviceId----buizCode:{}--serviceType:{}-----", buizCode, serviceType);
         if (!validate(buizCode, serviceType, env)) {
             LOGGER.error("1.1----非法参数--buizCode:{}--serviceType:{}----", buizCode, serviceType);
-            return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "参数校验有误");
         }
         /**serviceType  99时，buizCode是已经拼好的serviceId*/
         String type = getType(serviceType, buizCode);
@@ -89,7 +92,7 @@ public class ManagerController {
             LOGGER.debug("2.--------获得serviceResource----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
             PaasServiceResource serviceResource = paasServiceResourceService.getPaasServiceResource(serviceType, env);
             if (serviceResource == null)
-                return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
+                return RspVo.error(ServiceConstants.INFO.code_fail + "", "没有找到对应环境资源，请先配置");
             LOGGER.debug("2.2--------添加zookeeper信息----buizCode:{}-----serviceId:{}-----", buizCode, serviceId);
             String content = addzkConf(buizCode, type, serviceId, serviceResource);
 
@@ -98,8 +101,7 @@ public class ManagerController {
             addInstance(buizCode, type, serviceId, remark, serviceResource, content, env);
         } catch (Exception e) {
             LOGGER.error("", e);
-            return RspVo.error(ServiceConstants.INFO.code_fail + "", ServiceConstants.OPEN_ERROR_STR);
-
+            return RspVo.error(ServiceConstants.INFO.code_fail + "", "开通失败");
         }
 
         return RspVo.success(serviceId);
@@ -124,6 +126,7 @@ public class ManagerController {
             jsonObject.put("type", s[0] == null ? "" : s[0]);
             jsonObject.put("servicerId", paasServiceInstance.getServiceId());
             jsonObject.put("remark", paasServiceInstance.getRemark());
+            jsonObject.put("env", StringUtils.isEmpty(paasServiceInstance.getEnv()) ? "" : paasServiceInstance.getEnv());
             array.add(jsonObject);
         }
 
@@ -239,6 +242,13 @@ public class ManagerController {
         return RspVo.success("success");
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/getEnvList", method = RequestMethod.GET)
+    public RspVo getEnvList(HttpServletRequest request) {
+        String envs = systemProperties.getEnvs();
+        return RspVo.success(envs.split(","));
+    }
 
     //******************************* 辅助方法 ****************************************
 
